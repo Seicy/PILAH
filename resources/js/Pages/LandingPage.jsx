@@ -11,6 +11,8 @@ import {
     MapPin
 } from "lucide-react";
 
+import { router } from "@inertiajs/react";
+
 import Kucing from "@/Assets/Kucing.png";
 import Hanggar from "@/Assets/Hanggar.png";
 import Menu from "@/Assets/Menu.svg";
@@ -23,145 +25,107 @@ export default function LandingPage() {
         setIsScanning(true);
 
         setTimeout(() => {
-            alert("RFID Detected. Redirecting...");
+            router.visit("/CaptainDashboard");  
         }, 1500);
     };
 
     return (
-        <div
-            className="min-h-screen bg-cover bg-center bg-no-repeat"
+        <div className="min-h-screen bg-cover bg-center bg-no-repeat">
 
-        >
-
-            {/* NAVBAR */}
             <Navbar />
 
-            {/* ============================
-                SECTION 1 — LANDING
-            ============================ */}
-<div
-    className="w-full h-[1000px] bg-cover bg-center bg-no-repeat flex flex-col pt-20"
-    style={{ backgroundImage: `url(${Hanggar})` }}
->
-    <main className="px-6 py-10 grid lg:grid-cols-2 gap-12 items-start">
+            {/* SECTION 1 */}
+            <div
+                className="w-full h-[1000px] bg-cover bg-center bg-no-repeat flex flex-col pt-20"
+                style={{ backgroundImage: `url(${Hanggar})` }}
+            >
+                <main className="px-6 py-10 grid lg:grid-cols-2 gap-12 items-start">
 
-        {/* LEFT TEXT */}
-        <div className="flex flex-col justify-center p-16 rounded-xl backdrop-blur-md">
-            <h2 className="text-6xl font-bold leading-tight text-white">
-                Aplikasi Peminjaman Alat
-                Hanggar Perawatan<br />
-                Pesawat
-            </h2>
+                    {/* LEFT */}
+                    <div className="flex flex-col justify-center p-16 rounded-xl backdrop-blur-md">
+                        <h2 className="text-6xl font-bold leading-tight text-white">
+                            Aplikasi Peminjaman Alat
+                            Hanggar Perawatan<br />
+                            Pesawat
+                        </h2>
 
-            <p className="text-white mt-4 font-medium">
-                Sistem manajemen peminjaman alat berbasis
-                <b> “Artificial Intelligence” </b> dengan teknologi
-                <b> “RFID” </b> untuk efisiensi dan keamanan maksimal.
-            </p>
-        </div>
+                        <p className="text-white mt-4 font-medium">
+                            Sistem manajemen peminjaman alat berbasis
+                            <b> “Artificial Intelligence” </b> dengan teknologi
+                            <b> “RFID” </b> untuk efisiensi dan keamanan maksimal.
+                        </p>
+                    </div>
 
-{/* RIGHT RFID PANEL (FULL SCREEN HEIGHT) */}
-<div className="bg-blue-900/80 backdrop-blur-lg p-10 rounded-2xl shadow-lg 
-                h-screen flex flex-col justify-between">
-    
-    <div className="text-center">
-        <Radio className="w-12 h-12 mx-auto text-white" />
-        <h3 className="text-2xl font-semibold mt-4 text-white">
-            RFID Access Point
-        </h3>
-        <p className="text-blue-200 mt-2">
-            Tap kartu RFID Anda untuk mengakses sistem
-        </p>
-    </div>
+                    {/* RIGHT */}
+                    <div className="bg-blue-900/80 backdrop-blur-lg p-10 rounded-2xl shadow-lg 
+                                    h-screen flex flex-col justify-between">
 
-    <button
-        onClick={handleRFIDTap}
-        className="w-full bg-blue-500 hover:bg-blue-400 transition p-10 py-16 rounded-xl mt-8 text-xl font-semibold"
-    >
-        {isScanning ? (
-            <Loader2 className="w-14 h-14 mx-auto animate-spin" />
-        ) : (
-            <Radio className="w-14 h-14 mx-auto" />
-        )}
-        <p className="mt-5 font-medium text-white text-2xl">
-            {isScanning ? "Scanning..." : "Tap Your RFID Card"}
-        </p>
-    </button>
+                        <div className="text-center">
+                            <Radio className="w-12 h-12 mx-auto text-white" />
+                            <h3 className="text-2xl font-semibold mt-4 text-white">
+                                RFID Access Point
+                            </h3>
+                            <p className="text-blue-200 mt-2">
+                                Tap kartu RFID Anda untuk mengakses sistem
+                            </p>
+                        </div>
 
-    <div className="mt-6 flex items-center justify-center gap-2 text-blue-300 text-sm">
-        <ShieldCheck className="w-4 h-4" />
-        Secured by PILAH
-    </div>
-</div>
+                        <button
+                            onClick={handleRFIDTap}
+                            className="w-full bg-blue-500 hover:bg-blue-400 transition p-10 py-16 rounded-xl mt-8 text-xl font-semibold"
+                        >
+                            {isScanning ? (
+                                <Loader2 className="w-14 h-14 mx-auto animate-spin" />
+                            ) : (
+                                <Radio className="w-14 h-14 mx-auto" />
+                            )}
+                            <p className="mt-5 font-medium text-white text-2xl">
+                                {isScanning ? "Scanning..." : "Tap Your RFID Card"}
+                            </p>
+                        </button>
 
+                        <div className="mt-6 flex items-center justify-center gap-2 text-blue-300 text-sm">
+                            <ShieldCheck className="w-4 h-4" />
+                            Secured by PILAH
+                        </div>
+                    </div>
 
-    </main>
-</div>
+                </main>
+            </div>
 
-{/* ============================
-    SECTION 2 — FEATURES
-============================ */}
-<div className="py-24 px-6 max-w-7xl mx-auto bg-white/80 mt-10 rounded-2xl backdrop-blur-md">
-    <h2 className="text-4xl font-bold text-black text-center">Fitur Unggulan</h2>
+            {/* SECTION 2 */}
+            <div className="py-24 px-6 max-w-7xl mx-auto bg-white/80 mt-10 rounded-2xl backdrop-blur-md">
+                <h2 className="text-4xl font-bold text-black text-center">Fitur Unggulan</h2>
 
-    {/* GRID FEATURE CARDS */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-12">
+                    <FeatureCard icon={<Zap size={40} />} title="AI-Powered" desc="Sistem cerdas untuk prediksi kebutuhan alat" />
+                    <FeatureCard icon={<Radio size={40} />} title="RFID Technology" desc="Akses cepat dan aman dengan kartu RFID" />
+                    <FeatureCard icon={<Wrench size={40} />} title="Tool Management" desc="Kelola inventaris alat dengan mudah" />
+                    <FeatureCard icon={<Users size={40} />} title="User Tracking" desc="Lacak riwayat peminjaman secara real-time" />
+                </div>
 
-        <FeatureCard
-            icon={<Zap size={40} />}
-            title="AI-Powered"
-            desc="Sistem cerdas untuk prediksi kebutuhan alat"
-        />
+                <ul className="mt-14 space-y-3 text-blue-900 text-lg font-medium">
+                    <li>• Mengurangi waktu pencarian alat hingga 70%</li>
+                    <li>• Meningkatkan akuntabilitas peminjaman alat</li>
+                    <li>• Otomasi laporan dan dokumentasi</li>
+                    <li>• Integrasi dengan sistem maintenance pesawat</li>
+                </ul>
+            </div>
 
-        <FeatureCard
-            icon={<Radio size={40} />}
-            title="RFID Technology"
-            desc="Akses cepat dan aman dengan kartu RFID"
-        />
-
-        <FeatureCard
-            icon={<Wrench size={40} />}
-            title="Tool Management"
-            desc="Kelola inventaris alat dengan mudah"
-        />
-
-        <FeatureCard
-            icon={<Users size={40} />}
-            title="User Tracking"
-            desc="Lacak riwayat peminjaman secara real-time"
-        />
-
-    </div>
-
-    <ul className="mt-14 space-y-3 text-blue-900 text-lg font-medium">
-        <li>• Mengurangi waktu pencarian alat hingga 70%</li>
-        <li>• Meningkatkan akuntabilitas peminjaman alat</li>
-        <li>• Otomasi laporan dan dokumentasi</li>
-        <li>• Integrasi dengan sistem maintenance pesawat</li>
-    </ul>
-</div>
-
-
-            {/* ============================
-                FOOTER
-            ============================ */}
             <Footer />
-
         </div>
     );
 }
 
 /* ============================
-    NAVBAR COMPONENT
+       NAVBAR
 ============================ */
 function Navbar() {
     const [open, setOpen] = useState(false);
     const [solid, setSolid] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setSolid(window.scrollY > 50);
-        };
+        const handleScroll = () => setSolid(window.scrollY > 50);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
@@ -187,12 +151,12 @@ function Navbar() {
                     </div>
                 </div>
 
-                {/* MOBILE TOGGLE */}
+                {/* MOBILE MENU BUTTON */}
                 <button
                     className={`md:hidden ${solid ? "text-black" : "text-white"}`}
                     onClick={() => setOpen(!open)}
                 >
-                    <img src={Menu} className="w-10 text-black" />
+                    <img src={Menu} className="w-10" />
                 </button>
 
                 {/* DESKTOP MENU */}
@@ -201,21 +165,53 @@ function Navbar() {
                         solid ? "text-black" : "text-white"
                     }`}
                 >
-                    <a href="#home" className="hover:text-blue-600">Home</a>
-                    <a href="#about" className="hover:text-blue-600">About Us</a>
-                    <a href="#profile" className="hover:text-blue-600">Profile</a>
+                    <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                        className="hover:text-blue-600"
+                    >
+                        Home
+                    </button>
+
+                    <button
+                        onClick={() => window.scrollTo({ top: 900, behavior: "smooth" })}
+                        className="hover:text-blue-600"
+                    >
+                        About Us
+                    </button>
+
+                    <button
+                        onClick={() => router.visit("/StoremanLogin")}
+                        className={`px-4 py-2 rounded-lg font-bold transition ${
+                            solid ? "bg-blue-700 text-white" : "bg-white text-blue-900"
+                        }`}
+                    >
+                        Storeman Login
+                    </button>
                 </div>
 
                 {/* MOBILE MENU */}
                 {open && (
-                    <div
-                        className={`absolute top-16 right-4 p-4 rounded-lg md:hidden flex flex-col space-y-3 ${
-                            solid ? "bg-blue-900/80 text-white" : "bg-blue-900/80 text-white"
-                        }`}
-                    >
-                        <a href="#home" className="hover:text-blue-400">Home</a>
-                        <a href="#about" className="hover:text-blue-400">About Us</a>
-                        <a href="#profile" className="hover:text-blue-400">Profile</a>
+                    <div className="absolute top-16 right-4 p-4 rounded-lg md:hidden bg-blue-900/80 text-white flex flex-col space-y-3">
+                        <button
+                            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                            className="hover:text-blue-400"
+                        >
+                            Home
+                        </button>
+
+                        <button
+                            onClick={() => window.scrollTo({ top: 900, behavior: "smooth" })}
+                            className="hover:text-blue-400"
+                        >
+                            About Us
+                        </button>
+
+                        <button
+                            onClick={() => router.visit("/StoremanLogin")}
+                            className="hover:text-blue-400 text-left"
+                        >
+                            Storeman Login
+                        </button>
                     </div>
                 )}
             </div>
@@ -223,9 +219,7 @@ function Navbar() {
     );
 }
 
-/* ============================
-    FEATURE CARD
-============================ */
+/* COMPONENT KECIL */
 function FeatureCard({ icon, title, desc }) {
     return (
         <div className="bg-blue-900 p-6 rounded-xl border border-blue-200">
@@ -236,15 +230,11 @@ function FeatureCard({ icon, title, desc }) {
     );
 }
 
-/* ============================
-    FOOTER COMPONENT
-============================ */
+/* FOOTER */
 function Footer() {
     return (
         <footer className="bg-blue-950 text-white mt-20 py-12">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
-
-                {/* Logo */}
                 <div>
                     <h2 className="font-bold text-xl">PILAH System</h2>
                     <p className="text-blue-300 mt-2 text-sm">
@@ -252,7 +242,6 @@ function Footer() {
                     </p>
                 </div>
 
-                {/* Contact Info */}
                 <div>
                     <h3 className="font-semibold text-lg">Kontak</h3>
                     <div className="mt-3 space-y-2 text-blue-300">
@@ -262,12 +251,10 @@ function Footer() {
                     </div>
                 </div>
 
-                {/* Credit */}
                 <div>
                     <h3 className="font-semibold text-lg">Dikembangkan Oleh</h3>
                     <p className="text-blue-300 mt-2">TEAM PILAH</p>
                 </div>
-
             </div>
 
             <div className="text-center text-blue-400 text-sm mt-10 pt-6 border-t border-blue-800">
