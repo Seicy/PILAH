@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'roboflow' => [
+    'key' => env('ROBOFLOW_API_KEY'),
+    'model' => env('ROBOFLOW_MODEL_ID'),
+],
+
 ];

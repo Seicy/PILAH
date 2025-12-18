@@ -13,7 +13,7 @@ import {
 
 import { router } from "@inertiajs/react";
 
-import Kucing from "@/Assets/Kucing.png";
+import Pilah from "@/Assets/Pilah.png";
 import Hanggar from "@/Assets/Hanggar.png";
 import Menu from "@/Assets/Menu.svg";
 
@@ -140,7 +140,7 @@ function Navbar() {
 
                 {/* LOGO */}
                 <div className="flex items-center gap-3">
-                    <img src={Kucing} className="h-12 w-12 rounded-full" />
+                    <img src={Pilah} className="h-12 w-12 rounded-full" />
                     <div>
                         <h1 className={`font-bold text-2xl ${solid ? "text-black" : "text-white"}`}>
                             PILAH

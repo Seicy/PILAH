@@ -132,17 +132,7 @@ export default function KelolaPengguna() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium">Email *</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    className="w-full border rounded-md p-2"
-                  />
-                </div>
+                
               </div>
 
               <div className="flex justify-end mt-4 gap-2">

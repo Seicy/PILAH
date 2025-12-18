@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { UserCircle } from "lucide-react";
+import { UserCircle, LogOut } from "lucide-react";
+import { router } from "@inertiajs/react";
 
 export default function CaptainHeader() {
   const [open, setOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -18,6 +20,16 @@ export default function CaptainHeader() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = () => {
+    setOpen(false);
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    // Pastikan route web.php ada: Route::get('/', ... Inertia::render('LandingPage'));
+    router.visit("/"); 
+  };
 
   return (
     <>
@@ -42,13 +54,16 @@ export default function CaptainHeader() {
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
                     setOpen(false);
-                    setShowModal(true);
+                    setShowProfileModal(true);
                   }}
                 >
                   Profile
                 </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Logout
+                <li
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                  onClick={handleLogout}
+                >
+                  <LogOut size={16} /> Logout
                 </li>
               </ul>
             </div>
@@ -57,13 +72,13 @@ export default function CaptainHeader() {
       </div>
 
       {/* MODAL PROFILE */}
-      {showModal && (
+      {showProfileModal && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center z-50">
           <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-xl w-80 relative">
 
             {/* CLOSE BUTTON */}
             <button
-              onClick={() => setShowModal(false)}
+              onClick={() => setShowProfileModal(false)}
               className="absolute top-2 right-3 text-gray-600 hover:text-black text-xl"
             >
               ✕
@@ -80,10 +95,36 @@ export default function CaptainHeader() {
 
             <div className="mt-5">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => setShowProfileModal(false)}
                 className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL LOGOUT */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-80 text-center">
+            <h2 className="text-lg font-bold mb-4 text-gray-800">
+              Anda yakin ingin log out?
+            </h2>
+
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Ya, Logout
               </button>
             </div>
           </div>

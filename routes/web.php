@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth; // jangan lupa import Auth
 
 // HALAMAN UTAMA
 Route::get('/', function () {
@@ -38,5 +39,15 @@ Route::get('/CaptainPeminjaman', function () {
     return Inertia::render('CaptainPeminjaman');
 });
 
-require __DIR__.'/auth.php';
+// =========================
+// LOGOUT
+// =========================
+Route::post('/logout', function () {
+    Auth::logout(); // hapus session user
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
 
+    return redirect('/'); // arahkan ke LandingPage.jsx
+})->name('logout');
+
+require __DIR__.'/auth.php';

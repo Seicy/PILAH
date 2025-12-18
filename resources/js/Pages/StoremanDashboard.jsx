@@ -47,22 +47,7 @@ export default function StoremanDashboard() {
                         Inventaris Alat & Peminjaman
                     </h2>
 
-                    {/* Search & Filter */}
-                    <div className="flex gap-2 mb-4">
-                        <input
-                            type="text"
-                            placeholder="Cari nama/kode alat..."
-                            className="border rounded-md p-2 flex-1"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-
-                        <select className="border rounded-md p-2">
-                            <option>Status</option>
-                            <option>Tersedia</option>
-                            <option>Dipinjam</option>
-                        </select>
-                    </div>
+                    
 
                     {/* Table */}
                     <table className="w-full border border-blue-200 shadow">

@@ -2,6 +2,9 @@ import React from "react";
 import { Home, Users } from "lucide-react";
 import { router, usePage } from "@inertiajs/react";
 
+// IMPORT LOGO
+import Pilah from "@/Assets/Pilah.png";
+
 export default function CaptainSidebar() {
   const { url } = usePage(); // untuk cek route aktif
 
@@ -10,14 +13,13 @@ export default function CaptainSidebar() {
   return (
     <div className="w-64 bg-blue-900 text-white flex flex-col min-h-screen shadow-lg">
       
-      {/* LOGO */}
-      <div className="p-5 flex items-center border-b border-blue-700">
+      {/* LOGO FULL */}
+      <div className="p-5 flex justify-center border-b border-blue-700">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_placeholder.svg"
-          alt="Logo"
-          className="w-10 h-10 mr-3"
+          src={Pilah}
+          alt="Pilah"
+          className="w-32 h-auto" // sesuaikan ukuran logo
         />
-        <h2 className="text-lg font-bold tracking-wide">PILAH</h2>
       </div>
 
       {/* MENU */}
@@ -42,7 +44,6 @@ export default function CaptainSidebar() {
         >
           <Users size={18} /> Peminjaman
         </li>
-
       </ul>
     </div>
   );
