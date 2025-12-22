@@ -19,6 +19,7 @@ import Menu from "@/Assets/Menu.svg";
 
 export default function LandingPage() {
     const [isScanning, setIsScanning] = useState(false);
+    const isStoremanLogin = localStorage.getItem("storeman_login");
 
     const handleRFIDTap = () => {
         if (isScanning) return;
@@ -54,11 +55,23 @@ export default function LandingPage() {
                             <b> “Artificial Intelligence” </b> dengan teknologi
                             <b> “RFID” </b> untuk efisiensi dan keamanan maksimal.
                         </p>
+
+{!isStoremanLogin && (
+    <button
+        onClick={() => router.visit("/StoremanLogin")}
+        className="w-1/2 px-8 py-4 bg-blue-600 hover:bg-blue-500
+        text-white font-semibold rounded-xl shadow-lg mt-4">
+            Get Started
+    </button>
+)}
+
+
+
                     </div>
 
                     {/* RIGHT */}
                     <div className="bg-blue-900/80 backdrop-blur-lg p-10 rounded-2xl shadow-lg 
-                                    h-screen flex flex-col justify-between">
+                                    h-full flex flex-col justify-between">
 
                         <div className="text-center">
                             <Radio className="w-12 h-12 mx-auto text-white" />
@@ -123,6 +136,7 @@ export default function LandingPage() {
 function Navbar() {
     const [open, setOpen] = useState(false);
     const [solid, setSolid] = useState(false);
+    const isStoremanLogin = localStorage.getItem("storeman_login");
 
     useEffect(() => {
         const handleScroll = () => setSolid(window.scrollY > 50);
@@ -132,11 +146,11 @@ function Navbar() {
 
     return (
         <nav
-            className={`fixed top-0 left-0 w-full z-50 px-4 transition-all ${
-                solid ? "bg-white shadow-lg backdrop-blur-lg" : "bg-transparent"
+            className={`fixed top-0 left-0 w-full z-50 px-8 transition-all ${
+                solid ? "bg-white/50 backdrop-blur-md shadow-lg" : "bg-transparent"
             }`}
         >
-            <div className="mx-auto flex justify-between h-16 items-center">
+            <div className="w-full mx-auto flex justify-between h-16 items-center">
 
                 {/* LOGO */}
                 <div className="flex items-center gap-3">
@@ -179,14 +193,18 @@ function Navbar() {
                         About Us
                     </button>
 
-                    <button
-                        onClick={() => router.visit("/StoremanLogin")}
-                        className={`px-4 py-2 rounded-lg font-bold transition ${
-                            solid ? "bg-blue-700 text-white" : "bg-white text-blue-900"
-                        }`}
-                    >
-                        Storeman Login
-                    </button>
+{!isStoremanLogin && (
+    <button
+        onClick={() => router.visit("/StoremanLogin")}
+        className={`px-4 py-2 rounded-lg font-bold transition ${
+            solid ? "bg-blue-700 text-white" : "bg-white text-blue-900"
+        }`}
+    >
+        Storeman Login
+    </button>
+)}
+
+
                 </div>
 
                 {/* MOBILE MENU */}
@@ -206,12 +224,15 @@ function Navbar() {
                             About Us
                         </button>
 
-                        <button
-                            onClick={() => router.visit("/StoremanLogin")}
-                            className="hover:text-blue-400 text-left"
-                        >
-                            Storeman Login
-                        </button>
+{!isStoremanLogin && (
+    <button
+        onClick={() => router.visit("/StoremanLogin")}
+        className="hover:text-blue-400 text-left"
+    >
+        Storeman Login
+    </button>
+)}
+
                     </div>
                 )}
             </div>
@@ -233,27 +254,45 @@ function FeatureCard({ icon, title, desc }) {
 /* FOOTER */
 function Footer() {
     return (
-        <footer className="bg-blue-950 text-white mt-20 py-12">
+        <footer className="bg-blue-950 text-white mt-20 py-8">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div>
-                    <h2 className="font-bold text-xl">PILAH System</h2>
+
+                {/* COLUMN 1 */}
+                <div className="flex flex-col items-center text-center">
+                    <h2 className="font-bold text-xl">
+                        PILAH System
+                    </h2>
                     <p className="text-blue-300 mt-2 text-sm">
                         Sistem peminjaman alat berbasis AI & RFID.
                     </p>
                 </div>
 
-                <div>
-                    <h3 className="font-semibold text-lg">Kontak</h3>
-                    <div className="mt-3 space-y-2 text-blue-300">
-                        <p className="flex items-center gap-2"><Mail size={18}/> pilah.system@gmail.com</p>
-                        <p className="flex items-center gap-2"><Phone size={18}/> +62 812-3456-7890</p>
-                        <p className="flex items-center gap-2"><MapPin size={18}/> Hanggar Perawatan Pesawat</p>
+                {/* COLUMN 2 */}
+                <div className="flex flex-col items-center text-center">
+                    <h3 className="font-semibold text-lg">
+                        Kontak
+                    </h3>
+                    <div className="mt-3 space-y-2 text-blue-300 text-sm">
+                        <p className="flex items-center justify-center gap-2">
+                            <Mail size={18}/> pilah.system@gmail.com
+                        </p>
+                        <p className="flex items-center justify-center gap-2">
+                            <Phone size={18}/> +62 812-3456-7890
+                        </p>
+                        <p className="flex items-center justify-center gap-2">
+                            <MapPin size={18}/> Hanggar Perawatan Pesawat
+                        </p>
                     </div>
                 </div>
 
-                <div>
-                    <h3 className="font-semibold text-lg">Dikembangkan Oleh</h3>
-                    <p className="text-blue-300 mt-2">TEAM PILAH</p>
+                {/* COLUMN 3 */}
+                <div className="flex flex-col items-center text-center">
+                    <h3 className="font-semibold text-lg">
+                        Dikembangkan Oleh
+                    </h3>
+                    <p className="text-blue-300 mt-2 text-sm">
+                        TEAM PILAH
+                    </p>
                 </div>
             </div>
 
@@ -263,3 +302,5 @@ function Footer() {
         </footer>
     );
 }
+
+

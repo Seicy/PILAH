@@ -1,31 +1,35 @@
 import React, { useState } from "react";
 import { ArrowLeft, Lock, User } from "lucide-react";
 import { router, Link } from "@inertiajs/react";
+import Hanggar from "@/Assets/hanggar.png";
 
 export default function StoremanLogin() {
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        setLoading(true);
+const handleLogin = (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-        setTimeout(() => {
-            setLoading(false);
-            alert("Storeman Berhasil Login!");
-            router.visit("/StoremanDashboard"); // ⬅ NAVIGASI INERTIA
-        }, 1500);
-    };
+    setTimeout(() => {
+        setLoading(false);
+        localStorage.setItem("storeman_login", "true"); // ⬅️ SIMPAN LOGIN
+        router.visit("/StoremanDashboard");
+    }, 1500);
+};
+
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 flex items-center justify-center px-6">
+        <div className="min-h-screen flex items-center justify-center px-6 bg-cover bg-center bg-no-repeat relative"
+        style={{ backgroundImage: `url(${Hanggar})` }}
+        >
             
             {/* CARD */}
-            <div className="w-full max-w-md bg-blue-900/40 backdrop-blur-xl border border-blue-500/40 shadow-2xl rounded-2xl p-8">
+            <div className="w-full max-w-md bg-blue-500/40 backdrop-blur-xl border border-blue-500/40 shadow-2xl rounded-2xl p-8">
 
                 {/* Back Button */}
                 <button
                     onClick={() => router.visit("/")}
-                    className="flex items-center gap-2 text-blue-200 hover:text-white mb-6 transition"
+                    className="flex items-center gap-2 text-white hover:text-blue-300 mb-6 transition"
                 >
                     <ArrowLeft size={20} />
                     Landing Page
@@ -44,20 +48,20 @@ export default function StoremanLogin() {
                 <form onSubmit={handleLogin} className="space-y-5">
 
                     {/* Username */}
-                    <div className="bg-blue-900/40 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
-                        <User className="text-blue-300" />
+                    <div className="bg-blue-900/90 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
+                        <User className="text-white" />
                         <input
                             type="text"
                             required
                             placeholder="Username"
-                            className="w-full bg-blue-900/10 text-white placeholder-blue-300 outline-none border-none"
+                            className="w-full bg-blue-700/40 text-white placeholder-blue-300 outline-none border-none"
                             style={{ backgroundColor: "rgba(30, 58, 138, 0.1)" }}
                         />
                     </div>
 
                     {/* Password */}
-                    <div className="bg-blue-900/40 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
-                        <Lock className="text-blue-300" />
+                    <div className="bg-blue-900/90 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
+                        <Lock className="text-white" />
                         <input
                             type="password"
                             required

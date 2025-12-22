@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { router } from "@inertiajs/react";
 import StoremanSidebar from "@/Components/StoremanSidebar";
 import StoremanHeader from "@/Components/StoremanHeader";
 
 export default function StoremanDashboard() {
+
+useEffect(() => {
+    const isLogin = localStorage.getItem("storeman_login");
+    if (!isLogin) {
+        router.visit("/");
+    }
+}, []);
+
+
     const [search, setSearch] = useState("");
     const [activePage, setActivePage] = useState("dashboard");
 
