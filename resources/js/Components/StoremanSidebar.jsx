@@ -2,6 +2,9 @@ import React from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { Home, Users, Clock } from "lucide-react";
 
+// IMPORT FOTO PROFILE / LOGO
+import Pilah from "@/Assets/Pilah.png"; // bisa diganti foto storeman
+
 export default function StoremanSidebar() {
   const { url } = usePage();
 
@@ -12,11 +15,20 @@ export default function StoremanSidebar() {
   ];
 
   return (
-    <div className="w-64 h-screen bg-blue-900 text-white flex flex-col shadow-lg">
-      <div className="p-5 border-b border-blue-700">
-        <h2 className="text-lg font-bold">PILAH</h2>
+    <div className="w-64 min-h-screen bg-blue-900 text-white flex flex-col shadow-lg">
+
+      {/* PROFILE STOREMAN */}
+      <div className="p-6 flex flex-col items-center border-b border-blue-700">
+        <img
+          src={Pilah}
+          alt="Storeman Profile"
+          className="w-24 h-24 rounded-full"
+        />
+        <h3 className="font-semibold text-lg">Wawan</h3>
+        <p className="text-sm text-blue-200">Administrator</p>
       </div>
 
+      {/* MENU */}
       <ul className="flex-1 p-4 space-y-2">
         {menu.map((item) => {
           const isActive = url.startsWith(item.path);

@@ -19,7 +19,7 @@ import Menu from "@/Assets/Menu.svg";
 
 export default function LandingPage() {
     const [isScanning, setIsScanning] = useState(false);
-    const isStoremanLogin = localStorage.getItem("storeman_login");
+    const isStoremanLogin = localStorage.getItem("storeman_login") === "true";
 
     const handleRFIDTap = () => {
         if (isScanning) return;
@@ -60,10 +60,12 @@ export default function LandingPage() {
     <button
         onClick={() => router.visit("/StoremanLogin")}
         className="w-1/2 px-8 py-4 bg-blue-600 hover:bg-blue-500
-        text-white font-semibold rounded-xl shadow-lg mt-4">
-            Get Started
+        text-white font-semibold rounded-xl shadow-lg mt-4"
+    >
+        Get Started
     </button>
 )}
+
 
 
 
@@ -136,7 +138,7 @@ export default function LandingPage() {
 function Navbar() {
     const [open, setOpen] = useState(false);
     const [solid, setSolid] = useState(false);
-    const isStoremanLogin = localStorage.getItem("storeman_login");
+    const isStoremanLogin = localStorage.getItem("storeman_login") === "true";
 
     useEffect(() => {
         const handleScroll = () => setSolid(window.scrollY > 50);
@@ -205,6 +207,7 @@ function Navbar() {
 )}
 
 
+
                 </div>
 
                 {/* MOBILE MENU */}
@@ -232,6 +235,7 @@ function Navbar() {
         Storeman Login
     </button>
 )}
+
 
                     </div>
                 )}

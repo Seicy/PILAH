@@ -35,7 +35,7 @@ export default function StoremanHeader() {
     <>
       {/* HEADER */}
       <div className="bg-white shadow-md flex justify-between items-center px-6 py-4 border-b">
-        <h1 className="text-xl font-semibold text-gray-700">
+        <h1 className="text-4xl font-semibold text-gray-700">
           Storeman
         </h1>
 
@@ -92,7 +92,7 @@ export default function StoremanHeader() {
             </h2>
 
             <div className="flex flex-col gap-2 text-gray-700">
-              <p><strong>Nama:</strong> Storeman</p>
+              <p><strong>Nama:</strong> Wawan</p>
               <p><strong>Shift:</strong> Pagi</p>
             </div>
 

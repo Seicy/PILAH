@@ -18,7 +18,7 @@ export default function CaptainSidebar() {
         <img
           src={Pilah}
           alt="Pilah"
-          className="w-32 h-auto" // sesuaikan ukuran logo
+          className="w-24 h-24 rounded-full object-cover border" // sesuaikan ukuran logo
         />
       </div>
 

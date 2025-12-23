@@ -5,30 +5,54 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default function KelolaPengguna() {
   const [users, setUsers] = useState([
-    { namaKelas: "Pagi A", semester: 3, email: "pagiA@pilah.com" },
-    { namaKelas: "Pagi B", semester: 3, email: "pagiB@pilah.com" },
-    { namaKelas: "Pagi C", semester: 5, email: "pagiC@pilah.com" },
-    { namaKelas: "Pagi D", semester: 3, email: "pagiD@pilah.com" },
+    { namaKelas: "Pagi A", semester: 3 },
+    { namaKelas: "Pagi B", semester: 3 },
+    { namaKelas: "Pagi C", semester: 5 },
+    { namaKelas: "Pagi D", semester: 3 },
   ]);
 
   const [modal, setModal] = useState(null);
   const [formData, setFormData] = useState({
     namaKelas: "",
     semester: "",
-    email: "",
   });
   const [editIndex, setEditIndex] = useState(null);
+  const [error, setError] = useState("");
 
+  // VALIDASI TAMBAH
   const handleAdd = () => {
+    if (!formData.namaKelas.trim()) {
+      setError("Nama kelas wajib diisi.");
+      return;
+    }
+
+    if (!formData.semester) {
+      setError("Semester wajib diisi.");
+      return;
+    }
+
     setUsers([...users, formData]);
-    setFormData({ namaKelas: "", semester: "", email: "" });
+    setFormData({ namaKelas: "", semester: "" });
+    setError("");
     setModal(null);
   };
 
+  // VALIDASI EDIT
   const handleEdit = (index) => {
+    if (!formData.namaKelas.trim()) {
+      setError("Nama kelas wajib diisi.");
+      return;
+    }
+
+    if (!formData.semester) {
+      setError("Semester wajib diisi.");
+      return;
+    }
+
     const data = [...users];
     data[index] = formData;
     setUsers(data);
+    setError("");
     setModal(null);
   };
 
@@ -38,14 +62,24 @@ export default function KelolaPengguna() {
     setUsers(data);
   };
 
+  // VALIDASI SEMESTER (1 digit, angka, tidak minus)
+  const handleSemesterChange = (e) => {
+    let value = e.target.value;
+
+    // Hapus karakter selain angka
+    value = value.replace(/\D/g, "");
+
+    // Batasi hanya 1 digit
+    if (value.length > 1) return;
+
+    setFormData({ ...formData, semester: value });
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-      
       <StoremanSidebar />
 
-      {/* CONTENT AREA */}
       <div className="flex-1 flex flex-col">
-        
         <StoremanHeader />
 
         <div className="p-6">
@@ -53,7 +87,8 @@ export default function KelolaPengguna() {
 
           <button
             onClick={() => {
-              setFormData({ namaKelas: "", semester: "", email: "" });
+              setFormData({ namaKelas: "", semester: "" });
+              setError("");
               setModal("tambah");
             }}
             className="bg-blue-600 text-white px-3 py-2 rounded-md flex items-center gap-1 mb-3"
@@ -80,6 +115,7 @@ export default function KelolaPengguna() {
                       onClick={() => {
                         setEditIndex(i);
                         setFormData(u);
+                        setError("");
                         setModal("edit");
                       }}
                       className="text-blue-600"
@@ -107,32 +143,43 @@ export default function KelolaPengguna() {
                 {modal === "tambah" ? "Tambah Pengguna" : "Edit Pengguna"}
               </h2>
 
+              {error && (
+                <div className="bg-red-100 text-red-700 p-2 rounded mb-3 text-sm">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium">Nama Kelas *</label>
+                  <label className="block text-sm font-bold">
+                    Nama Kelas <span className="text-red-700">*</span>
+                  </label>
                   <input
                     type="text"
                     value={formData.namaKelas}
                     onChange={(e) =>
-                      setFormData({ ...formData, namaKelas: e.target.value })
+                      setFormData({
+                        ...formData,
+                        namaKelas: e.target.value,
+                      })
                     }
                     className="w-full border rounded-md p-2"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium">Semester *</label>
+                  <label className="block text-sm font-bold">
+                    Semester <span className="text-red-600">*</span>
+                  </label>
                   <input
                     type="number"
+                    min="1"
+                    max="9"
                     value={formData.semester}
-                    onChange={(e) =>
-                      setFormData({ ...formData, semester: e.target.value })
-                    }
+                    onChange={handleSemesterChange}
                     className="w-full border rounded-md p-2"
                   />
                 </div>
-
-                
               </div>
 
               <div className="flex justify-end mt-4 gap-2">
@@ -145,7 +192,9 @@ export default function KelolaPengguna() {
 
                 <button
                   onClick={() =>
-                    modal === "tambah" ? handleAdd() : handleEdit(editIndex)
+                    modal === "tambah"
+                      ? handleAdd()
+                      : handleEdit(editIndex)
                   }
                   className="px-4 py-2 rounded-md bg-blue-600 text-white"
                 >
@@ -155,7 +204,6 @@ export default function KelolaPengguna() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
