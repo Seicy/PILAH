@@ -1,0 +1,20 @@
+Langkah-Langkah RFID
+1. masuk ke EPS32 > src > main.cpp ubah kode const char* 
+ssid = "Chill";
+const char* password = "zzzzzzz1";
+
+const char* mqttServer = "10.11.211.132";
+sesuaikan dengan wifi dan ip address yang sedang digunakan
+
+2. install ini pada terminal composer require php-mqtt/client
+3. install broker mosquito
+4. buka pada command pro (CMD) C:\Program Files\mosquitto>mosquitto -c pilah.conf -v
+5. install extension PlatformIO dan C/C++
+6. pada PlatformIO cari Open Project lalu cari file ESP32 nya
+
+Langkah-Langkah menjalankan
+1. buka project esp32 pada PlatformIO, upload dan monitor
+2. buka pada command pro (CMD) jalankan C:\Program Files\mosquitto>mosquitto -c pilah.conf -v 
+3. php artisan mqtt:listen
+4. php artisan serve
+5. npm run dev

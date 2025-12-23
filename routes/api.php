@@ -3,6 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DetectionController;
+use App\Http\Controllers\RFIDLoginController;
+
+//---RFID LOGIN---//
+Route::post('/wait-scan', [RFIDLoginController::class, 'waitScan']);
+Route::post('/rfid/login', [RFIDLoginController::class, 'loginCaptain']);
+Route::get('/last-login', [RFIDLoginController::class, 'lastLogin']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
