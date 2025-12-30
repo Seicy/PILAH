@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth; // jangan lupa import Auth
 
+
 // HALAMAN UTAMA
 Route::get('/', function () {
     return Inertia::render('LandingPage');
@@ -51,3 +52,4 @@ Route::post('/logout', function () {
 })->name('logout');
 
 require __DIR__.'/auth.php';
+

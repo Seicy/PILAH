@@ -1,77 +1,106 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StoremanSidebar from "../Components/StoremanSidebar";
 import StoremanHeader from "../Components/StoremanHeader";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
-export default function KelolaPengguna() {
-  const [users, setUsers] = useState([
-    { namaKelas: "Pagi A", semester: 3 },
-    { namaKelas: "Pagi B", semester: 3 },
-    { namaKelas: "Pagi C", semester: 5 },
-    { namaKelas: "Pagi D", semester: 3 },
-  ]);
+const API_URL = "http://127.0.0.1:8000/api/storeman/captain-course";
 
+export default function KelolaPengguna() {
+  const [users, setUsers] = useState([]);
   const [modal, setModal] = useState(null);
   const [formData, setFormData] = useState({
     namaKelas: "",
     semester: "",
   });
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [error, setError] = useState("");
 
-  // VALIDASI TAMBAH
-  const handleAdd = () => {
+  /* ================= FETCH DATA ================= */
+  const fetchData = async () => {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    // mapping backend → frontend
+    const mapped = data.map((item) => ({
+      id: item.id,
+      namaKelas: item.kelas,
+      semester: item.semester,
+    }));
+
+    setUsers(mapped);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  /* ================= TAMBAH ================= */
+  const handleAdd = async () => {
     if (!formData.namaKelas.trim()) {
       setError("Nama kelas wajib diisi.");
       return;
     }
-
     if (!formData.semester) {
       setError("Semester wajib diisi.");
       return;
     }
 
-    setUsers([...users, formData]);
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        kelas: formData.namaKelas,
+        semester: formData.semester,
+      }),
+    });
+
+    fetchData();
+    setModal(null);
     setFormData({ namaKelas: "", semester: "" });
     setError("");
-    setModal(null);
   };
 
-  // VALIDASI EDIT
-  const handleEdit = (index) => {
+  /* ================= EDIT ================= */
+  const handleEdit = async () => {
     if (!formData.namaKelas.trim()) {
       setError("Nama kelas wajib diisi.");
       return;
     }
-
     if (!formData.semester) {
       setError("Semester wajib diisi.");
       return;
     }
 
-    const data = [...users];
-    data[index] = formData;
-    setUsers(data);
-    setError("");
+    await fetch(`${API_URL}/${editId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        kelas: formData.namaKelas,
+        semester: formData.semester,
+      }),
+    });
+
+    fetchData();
     setModal(null);
+    setEditId(null);
+    setError("");
   };
 
-  const handleDelete = (index) => {
-    const data = [...users];
-    data.splice(index, 1);
-    setUsers(data);
+  /* ================= DELETE ================= */
+  const handleDelete = async (id) => {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+    await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchData();
   };
 
-  // VALIDASI SEMESTER (1 digit, angka, tidak minus)
+  /* ================= VALIDASI SEMESTER ================= */
   const handleSemesterChange = (e) => {
-    let value = e.target.value;
-
-    // Hapus karakter selain angka
-    value = value.replace(/\D/g, "");
-
-    // Batasi hanya 1 digit
+    let value = e.target.value.replace(/\D/g, "");
     if (value.length > 1) return;
-
     setFormData({ ...formData, semester: value });
   };
 
@@ -83,7 +112,9 @@ export default function KelolaPengguna() {
         <StoremanHeader />
 
         <div className="p-6">
-          <h1 className="text-2xl font-semibold mb-4">Kelola Pengguna</h1>
+          <h1 className="text-2xl font-semibold mb-4">
+            Kelola Captain Course
+          </h1>
 
           <button
             onClick={() => {
@@ -106,31 +137,39 @@ export default function KelolaPengguna() {
               </tr>
             </thead>
             <tbody>
-              {users.map((u, i) => (
-                <tr key={i} className="text-center border">
-                  <td className="p-2 border">{u.namaKelas}</td>
-                  <td className="p-2 border">{u.semester}</td>
-                  <td className="p-2 border flex justify-center gap-3">
-                    <button
-                      onClick={() => {
-                        setEditIndex(i);
-                        setFormData(u);
-                        setError("");
-                        setModal("edit");
-                      }}
-                      className="text-blue-600"
-                    >
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(i)}
-                      className="text-red-600"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan="3" className="text-center p-4 text-gray-500">
+                    Data belum tersedia
                   </td>
                 </tr>
-              ))}
+              ) : (
+                users.map((u) => (
+                  <tr key={u.id} className="text-center border">
+                    <td className="p-2 border">{u.namaKelas}</td>
+                    <td className="p-2 border">{u.semester}</td>
+                    <td className="p-2 border flex justify-center gap-3">
+                      <button
+                        onClick={() => {
+                          setEditId(u.id);
+                          setFormData(u);
+                          setError("");
+                          setModal("edit");
+                        }}
+                        className="text-blue-600"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(u.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -140,7 +179,9 @@ export default function KelolaPengguna() {
           <div className="fixed inset-0 bg-black/40 flex justify-center items-center backdrop-blur-sm">
             <div className="bg-white rounded-md shadow-lg p-6 w-96">
               <h2 className="text-lg font-semibold mb-3">
-                {modal === "tambah" ? "Tambah Pengguna" : "Edit Pengguna"}
+                {modal === "tambah"
+                  ? "Tambah Captain Course"
+                  : "Edit Captain Course"}
               </h2>
 
               {error && (
@@ -152,7 +193,7 @@ export default function KelolaPengguna() {
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-bold">
-                    Nama Kelas <span className="text-red-700">*</span>
+                    Nama Kelas *
                   </label>
                   <input
                     type="text"
@@ -169,12 +210,10 @@ export default function KelolaPengguna() {
 
                 <div>
                   <label className="block text-sm font-bold">
-                    Semester <span className="text-red-600">*</span>
+                    Semester *
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    max="9"
                     value={formData.semester}
                     onChange={handleSemesterChange}
                     className="w-full border rounded-md p-2"
@@ -189,13 +228,8 @@ export default function KelolaPengguna() {
                 >
                   Batal
                 </button>
-
                 <button
-                  onClick={() =>
-                    modal === "tambah"
-                      ? handleAdd()
-                      : handleEdit(editIndex)
-                  }
+                  onClick={modal === "tambah" ? handleAdd : handleEdit}
                   className="px-4 py-2 rounded-md bg-blue-600 text-white"
                 >
                   {modal === "tambah" ? "Tambah" : "Update"}
