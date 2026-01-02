@@ -12,7 +12,6 @@ class CreateRfidCardsTable extends Migration
             $table->string('uid')->unique();
             $table->foreignId('captain_course_id')->nullable()->constrained('captain_courses')->onDelete('set null');
             $table->boolean('active')->default(true);
-            $table->string('label')->nullable();
             $table->timestamps();
         });
     }

@@ -42,7 +42,7 @@ useEffect(() => {
                 {/* Content */}
                 <div className="p-6">
                     {/* Title */}
-                    <h1 className="text-3xl font-bold mb-6">Storeman Dashboard</h1>
+                    <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
                     {/* Verifikasi RFID */}
                     <div className="bg-blue-100 p-4 rounded-md mb-6 shadow">

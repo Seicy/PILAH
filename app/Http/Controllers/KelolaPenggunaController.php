@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KelolaPengguna;
+use App\Models\RFIDCard;
 use Illuminate\Http\Request;
 
 class KelolaPenggunaController extends Controller
@@ -39,6 +40,34 @@ class KelolaPenggunaController extends Controller
     {
         KelolaPengguna::findOrFail($id)->delete();
         return response()->json(['message' => 'Deleted']);
+    }
+    public function storeRfid(Request $request) 
+{
+    $request->validate([
+        'uid' => 'required|string',
+        'captain_course_id' => 'required'
+    ]);
+
+    // Asumsi Anda punya tabel/model RfidCard
+    return \App\Models\RFIDCard::create($request->all());
+}
+
+public function indexRfid()
+{
+    // Mengambil data rfid beserta data kelasnya
+    return \App\Models\RFIDCard::with('captain')->get();
+}
+public function destroyRfid($id)
+    {
+        // Cari di model RFIDCard, bukan KelolaPengguna
+        $rfid = RFIDCard::find($id);
+
+        if (!$rfid) {
+            return response()->json(['message' => 'Kartu tidak ditemukan'], 404);
+        }
+
+        $rfid->delete();
+        return response()->json(['message' => 'Kartu RFID berhasil dihapus']);
     }
 }
 

@@ -24,8 +24,6 @@ export default function StoremanSidebar() {
           alt="Storeman Profile"
           className="w-24 h-24 rounded-full"
         />
-        <h3 className="font-semibold text-lg">Wawan</h3>
-        <p className="text-sm text-blue-200">Administrator</p>
       </div>
 
       {/* MENU */}

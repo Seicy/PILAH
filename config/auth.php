@@ -71,6 +71,23 @@ return [
         // ],
     ],
 
+    'providers' => [
+    'storemen' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Storeman::class,
+    ],
+    
+    ],
+
+    'guards' => [
+    'storeman' => [
+        'driver' => 'session',
+        'provider' => 'storemen',
+    ],
+    
+    ],
+
+
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

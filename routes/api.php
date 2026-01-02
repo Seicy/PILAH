@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\DetectionController;
 use App\Http\Controllers\RFIDLoginController;
 use App\Http\Controllers\KelolaPenggunaController;
 use App\Http\Controllers\CaptainCourseController;
+use App\Http\Controllers\StoremanAuthController;
+
 
 //---RFID LOGIN---//
 Route::post('/wait-scan', [RFIDLoginController::class, 'waitScan']);
@@ -29,8 +31,14 @@ Route::delete('/kelola-pengguna/{id}', [KelolaPenggunaController::class, 'destro
 
 //---Kelola Pengguna Captain Course---//
 Route::prefix('storeman')->group(function () {
+    Route::post('/login', [StoremanAuthController::class, 'login']);
+    Route::post('/logout', [StoremanAuthController::class, 'logout']);
     Route::get('/captain-course', [CaptainCourseController::class, 'index']);
     Route::post('/captain-course', [CaptainCourseController::class, 'store']);
     Route::put('/captain-course/{id}', [CaptainCourseController::class, 'update']);
     Route::delete('/captain-course/{id}', [CaptainCourseController::class, 'destroy']);
+    Route::get('/rfid-cards', [KelolaPenggunaController::class, 'indexRfid']);
+    Route::post('/rfid-cards', [KelolaPenggunaController::class, 'storeRfid']);
+    Route::delete('/rfid-cards/{id}', [KelolaPenggunaController::class, 'destroyRfid']);
+
 });

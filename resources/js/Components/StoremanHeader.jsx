@@ -53,15 +53,6 @@ export default function StoremanHeader() {
             <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border z-50">
               <ul className="py-2 text-gray-700">
                 <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    setOpen(false);
-                    setShowProfileModal(true);
-                  }}
-                >
-                  Profile
-                </li>
-                <li
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
                   onClick={handleLogout}
                 >

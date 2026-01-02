@@ -12,7 +12,6 @@ class RFIDCard extends Model
         'uid',
         'captain_course_id',
         'active',
-        'label',
     ];
 
     protected $casts = [

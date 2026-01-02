@@ -1,20 +1,37 @@
 import React, { useState } from "react";
 import { ArrowLeft, Lock, User } from "lucide-react";
 import { router } from "@inertiajs/react";
+import axios from "axios";
 import Hanggar from "@/Assets/hanggar.png";
 
 export default function StoremanLogin() {
     const [loading, setLoading] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        setTimeout(() => {
+        try {
+            const response = await axios.post("/api/storeman/login", {
+                username: username,
+                password: password,
+            });
+
+            // simpan status login
             localStorage.setItem("storeman_login", "true");
-            setLoading(false);
+            localStorage.setItem(
+                "storeman_username",
+                response.data.storeman.username
+            );
+
             router.visit("/StoremanDashboard");
-        }, 1500);
+        } catch (error) {
+            alert("Username atau password salah");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -22,7 +39,6 @@ export default function StoremanLogin() {
             className="min-h-screen flex items-center justify-center px-6 bg-cover bg-center bg-no-repeat relative"
             style={{ backgroundImage: `url(${Hanggar})` }}
         >
-            
             <div className="w-full max-w-md bg-blue-700/40 backdrop-blur-xl border border-blue-700/40 shadow-2xl rounded-2xl p-8">
 
                 {/* Back Button */}
@@ -46,29 +62,30 @@ export default function StoremanLogin() {
                 {/* FORM */}
                 <form onSubmit={handleLogin} className="space-y-5">
 
-                    
                     <div className="bg-blue-900/90 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
                         <User className="text-white" />
                         <input
                             type="text"
                             required
                             placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             className="w-full bg-transparent text-white placeholder-blue-300 border border-blue-700 outline-none"
                         />
                     </div>
 
-                    
                     <div className="bg-blue-900/90 border border-blue-700/40 rounded-xl p-3 flex items-center gap-3">
                         <Lock className="text-white" />
                         <input
                             type="password"
                             required
                             placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="w-full bg-transparent text-white placeholder-blue-300 border border-blue-700 outline-none"
                         />
                     </div>
 
-                    
                     <button
                         type="submit"
                         disabled={loading}
