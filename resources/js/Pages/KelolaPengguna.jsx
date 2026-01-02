@@ -195,8 +195,8 @@ export default function KelolaPengguna() {
 
           {/* BAGIAN 2: KELOLA RFID CARD */}
           <div className="mt-10">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-xl font-semibold text-gray-800">Kelola Kartu RFID</h2>
+            <div className="mb-3">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Kelola Kartu RFID</h2>
               <button
                 onClick={() => {
                   setModalRfid(true);
