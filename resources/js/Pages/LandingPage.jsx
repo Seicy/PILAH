@@ -27,55 +27,75 @@ export default function LandingPage() {
         RFID LOGIC (FINAL)
     ========================== */
     useEffect(() => {
-        // beri tahu backend halaman siap scan
-        fetch(API_WAIT, { method: "POST" });
+        let intervalId;
     
-        const interval = setInterval(async () => {
+        const startScan = async () => {
             try {
-                const res = await fetch(API_LAST);
-                const data = await res.json();
+                // Klaim scan RFID
+                await fetch(API_WAIT, {
+                    method: "POST",
+                    credentials: "include",
+                });
     
-                if (!data) return;
+                intervalId = setInterval(async () => {
+                    try {
+                        const res = await fetch(API_LAST, {
+                            credentials: "include",
+                        });
     
-                // ⏳ menunggu kartu → tampilkan Scanning
-                if (data.status === "waiting") {
-                    setIsScanning(true);
-                    return;
-                }
+                        const data = await res.json();
+                        if (!data) return;
     
-                // 😴 idle → kembali ke Tap
-                if (data.status === "idle") {
-                    setIsScanning(false);
-                    return;
-                }
+                        console.log("RFID STATUS:", data);
     
-                // ✅ scan selesai
-                if (data.status === "scanned") {
-                    clearInterval(interval);
-                    setIsScanning(false);
+                        // belum ada scan
+                        if (data.status === "idle") {
+                            setIsScanning(false);
+                            return;
+                        }
     
-                    if (!data.authorized) {
-                        alert("❌ RFID tidak terdaftar");
-                        return;
+                        // scan selesai
+                        if (data.status === "scanned") {
+                            clearInterval(intervalId);
+                            setIsScanning(false);
+    
+                            if (!data.authorized) {
+                                alert("❌ RFID tidak terdaftar");
+                                return;
+                            }
+    
+                            localStorage.setItem(
+                                "captain",
+                                JSON.stringify({
+                                    id: data.captain.id,
+                                    nama: data.captain.nama,
+                                    nim: data.captain.nim,
+                                    uid: data.uid,
+                                })
+                            );
+    
+                            // 🔁 redirect
+                            router.visit("/CaptainDashboard");
+                        }
+    
+                    } catch (err) {
+                        console.error("Polling error:", err);
                     }
-    
-                    localStorage.setItem("captain", JSON.stringify({
-                        id: data.captain.id,
-                        nama: data.captain.nama,
-                        nim: data.captain.nim,
-                        uid: data.uid
-                    }));
-    
-                    router.visit("/CaptainDashboard");
-                }
+                }, 800);
     
             } catch (err) {
-                console.error("RFID polling error:", err);
+                console.error("Wait scan error:", err);
             }
-        }, 800);
+        };
     
-        return () => clearInterval(interval);
+        startScan();
+    
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+        };
     }, []);
+    
+    
     
 
 

@@ -1,96 +1,151 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { router } from "@inertiajs/react";
 import StoremanSidebar from "@/Components/StoremanSidebar";
 import StoremanHeader from "@/Components/StoremanHeader";
 
 export default function StoremanDashboard() {
 
-useEffect(() => {
-    const isLogin = localStorage.getItem("storeman_login");
-    if (!isLogin) {
-        router.visit("/");
-    }
-}, []);
+    /* =====================
+       AUTH GUARD
+    ====================== */
+    useEffect(() => {
+        if (!localStorage.getItem("storeman_login")) {
+            router.visit("/");
+        }
+    }, []);
 
+    /* =====================
+       RFID STATE
+    ====================== */
+    const [rfidStatus, setRfidStatus] = useState("waiting");
+    const [rfidResult, setRfidResult] = useState(null);
 
-    const [search, setSearch] = useState("");
-    const [activePage, setActivePage] = useState("dashboard");
+    /* =====================
+       INVENTARIS
+    ====================== */
+    const [riwayat, setRiwayat] = useState([]);
 
-    const [alat] = useState([
-        { nama: "ToolboxA", kode: 3318, status: "Tersedia" },
-        { nama: "ToolboxB", kode: 3123, status: "Dipinjam" },
-        { nama: "ToolboxC", kode: 5231, status: "Tersedia" },
-        { nama: "ToolboxD", kode: 2528, status: "Tersedia" },
-    ]);
+    /* =====================
+       START RFID SCAN
+    ====================== */
+    useEffect(() => {
 
-    const filteredAlat = alat.filter((a) =>
-        a.nama.toLowerCase().includes(search.toLowerCase())
-    );
+        const interval = setInterval(async () => {
+            try {
+                const res = await axios.get("/api/last-login");
+
+                if (res.data.status === "scanned") {
+                    setRfidStatus("scanned");
+                    setRfidResult(res.data);
+                    clearInterval(interval);
+                }
+            } catch (err) {
+                console.error("RFID polling error", err);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    /* =====================
+       LOAD INVENTARIS
+    ====================== */
+    useEffect(() => {
+        axios.get("/api/riwayat-peminjaman")
+            .then(res => setRiwayat(res.data))
+            .catch(err => console.error(err));
+    }, []);
 
     return (
         <div className="flex min-h-screen bg-gray-100">
 
-            {/* ===== SIDEBAR ===== */}
-            <StoremanSidebar activePage={activePage} setActivePage={setActivePage} />
+            <StoremanSidebar activePage="dashboard" />
 
-            {/* ===== MAIN CONTENT ===== */}
             <div className="flex-1">
-                
-                {/* Header */}
                 <StoremanHeader />
 
-                {/* Content */}
                 <div className="p-6">
-                    {/* Title */}
                     <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-                    {/* Verifikasi RFID */}
+                    {/* =====================
+                        VERIFIKASI RFID
+                    ====================== */}
                     <div className="bg-blue-100 p-4 rounded-md mb-6 shadow">
-                        <h2 className="font-bold text-lg">KELAS TERVERIFIKASI</h2>
-                        <p>Kelas: Pagi A</p>
-                        <p>Semester: 3</p>
-                        <p>RFID Tag ID: A4:C3:F1:B9</p>
+                        <h2 className="font-bold text-lg mb-2">
+                            VERIFIKASI RFID
+                        </h2>
+
+                        {rfidStatus === "waiting" && (
+                            <p className="italic text-gray-600">
+                                Menunggu scan RFID...
+                            </p>
+                        )}
+
+                        {rfidStatus === "scanned" && rfidResult?.authorized && (
+                            <>
+                                <p><b>Kelas:</b> {rfidResult.captain.kelas}</p>
+                                <p><b>Semester:</b> {rfidResult.captain.semester}</p>
+                                <p><b>UID:</b> {rfidResult.uid}</p>
+                            </>
+                        )}
+
+                        {rfidStatus === "scanned" && !rfidResult?.authorized && (
+                            <p className="text-red-600 font-bold">
+                                RFID tidak terdaftar
+                            </p>
+                        )}
                     </div>
 
-                    {/* Inventaris Section */}
+                    {/* =====================
+                        INVENTARIS – SEDANG DIPINJAM
+                    ====================== */}
                     <h2 className="text-xl font-semibold mb-3">
                         Inventaris Alat & Peminjaman
                     </h2>
 
-                    
-
-                    {/* Table */}
-                    <table className="w-full border border-blue-200 shadow">
+                    <table className="w-full border border-blue-200 shadow bg-white">
                         <thead className="bg-blue-100">
                             <tr>
+                                <th className="p-2 border">Kode</th>
                                 <th className="p-2 border">Nama Alat</th>
-                                <th className="p-2 border">Kode Alat</th>
+                                <th className="p-2 border">Kelas</th>
                                 <th className="p-2 border">Status</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {filteredAlat.map((item, i) => (
-                                <tr key={i} className="text-center border">
-                                    <td className="p-2 border">{item.nama}</td>
-                                    <td className="p-2 border">{item.kode}</td>
-                                    <td
-                                        className={`p-2 border font-semibold ${
-                                            item.status === "Tersedia"
-                                                ? "text-green-600"
-                                                : "text-red-600"
-                                        }`}
-                                    >
-                                        {item.status}
+                            {riwayat.filter(r => r.status === "Dipinjam").length > 0 ? (
+                                riwayat
+                                    .filter(r => r.status === "Dipinjam")
+                                    .map(row => (
+                                        <tr key={row.id} className="text-center">
+                                            <td className="p-2 border font-mono">
+                                                {row.kode_pinjam}
+                                            </td>
+                                            <td className="p-2 border font-bold">
+                                                {row.nama_alat}
+                                            </td>
+                                            <td className="p-2 border">
+                                                {row.nama_kelas}
+                                            </td>
+                                            <td className="p-2 border text-red-600 font-semibold">
+                                                Dipinjam
+                                            </td>
+                                        </tr>
+                                    ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="p-6 text-center text-gray-400 italic">
+                                        Tidak ada alat yang sedang dipinjam
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
 
                 </div>
             </div>
-
         </div>
     );
 }

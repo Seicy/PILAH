@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\DB;
 class DetectionController extends Controller
 {
     private $toolMapping = [
-        'Toolbox 1'   => 'tang potong', 
-        'Toolbox 2'   => 'obeng',
+        'Toolbox 1'   => 'obeng', 
+        'Toolbox 2'   => 'tang potong',
         'Tang Potong' => 'tang potong',
         'Obeng'       => 'obeng',
     ];

@@ -4,24 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RFIDCard;
-use App\Models\CaptainCourse;
 use App\Models\ScanLog;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class RFIDLoginController extends Controller
 {
     /**
-     * Dipanggil oleh React untuk memberi tahu bahwa halaman sedang menunggu scan.
+     * Dipanggil React (Landing / Storeman)
+     * Menandai frontend SIAP menerima scan
      */
     public function waitScan()
     {
-        Cache::put('rfid_waiting', true, 30); // 30 detik
-        return response()->json(['status' => 'waiting']);
+        Cache::put('rfid_waiting_since', now(), 60);
+
+        return response()->json([
+            'status' => 'waiting'
+        ]);
     }
 
     /**
-     * Dipanggil oleh ESP via MQTT (bukan React)
-     * → Tetapi React polling hasilnya dari /api/last-login
+     * Dipanggil ESP via MQTT
+     * Menyimpan hasil scan ke DB (ScanLog)
      */
     public function loginCaptain(Request $request)
     {
@@ -29,21 +33,21 @@ class RFIDLoginController extends Controller
 
         if (!$uid) {
             return response()->json([
-                'success' => false,
+                'authorized' => false,
                 'message' => 'UID is required'
             ], 400);
         }
 
-        $card = RFIDCard::where('uid', $uid)->where('active', true)->first();
+        $card = RFIDCard::where('uid', $uid)
+            ->where('active', true)
+            ->first();
 
         if (!$card) {
-            $log = ScanLog::create([
+            ScanLog::create([
                 'uid' => $uid,
                 'captain_course_id' => null,
                 'authorized' => false,
             ]);
-
-            Cache::put('last_rfid_login', $log, 10);
 
             return response()->json([
                 'authorized' => false,
@@ -53,13 +57,11 @@ class RFIDLoginController extends Controller
 
         $captain = $card->captain;
 
-        $log = ScanLog::create([
+        ScanLog::create([
             'uid' => $uid,
             'captain_course_id' => $captain->id,
             'authorized' => true,
         ]);
-
-        Cache::put('last_rfid_login', $log->load('captain'), 10);
 
         return response()->json([
             'authorized' => true,
@@ -68,32 +70,38 @@ class RFIDLoginController extends Controller
     }
 
     /**
-     * React polling endpoint
+     * Dipanggil React (polling)
+     * Mengambil scan SETELAH waitScan()
      */
     public function lastLogin()
-{
-    $latest = Cache::get('last_rfid_login');
+    {
+        $waitingSince = Cache::get('rfid_waiting_since');
 
-    // BELUM ADA SCAN
-    if (!$latest) {
+        // Frontend belum siap scan
+        if (!$waitingSince) {
+            return response()->json([
+                'status' => 'idle'
+            ]);
+        }
+
+        // Cari scan BARU setelah waitScan
+        $scan = ScanLog::where('created_at', '>=', $waitingSince)
+            ->latest()
+            ->with('captain')
+            ->first();
+
+        if (!$scan) {
+            return response()->json([
+                'status' => 'waiting'
+            ]);
+        }
+
         return response()->json([
-            'status' => Cache::get('rfid_waiting') ? 'waiting' : 'idle'
+            'status'     => 'scanned',
+            'id'         => $scan->id,
+            'uid'        => $scan->uid,
+            'authorized' => $scan->authorized,
+            'captain'    => $scan->captain
         ]);
     }
-
-    // ADA SCAN → KIRIM KE FRONTEND
-    Cache::forget('last_rfid_login');
-    Cache::forget('rfid_waiting');
-
-    return response()->json([
-        'status'     => 'scanned',
-        'id'         => $latest->id,
-        'uid'        => $latest->uid,
-        'authorized' => $latest->authorized,
-        'captain'    => $latest->captain
-    ]);
-}
-
-
-
 }
