@@ -4,7 +4,7 @@ import HeaderCaptain from "@/Components/CaptainHeader";
 import Webcam from "react-webcam";
 import axios from "axios";
 
-// IMPORT GAMBAR TOOLBOX
+// ASSETS TOOLBOX
 import toolbox1 from "@/Assets/toolbox1.png";
 import toolbox2 from "@/Assets/toolbox2.png";
 import toolbox3 from "@/Assets/toolbox3.png";
@@ -15,200 +15,172 @@ import toolbox7 from "@/Assets/toolbox7.png";
 import toolbox8 from "@/Assets/toolbox8.png";
 
 const toolboxImages = {
-  "Toolbox 1": toolbox1,
-  "Toolbox 2": toolbox2,
-  "Toolbox 3": toolbox3,
-  "Toolbox 4": toolbox4,
-  "Toolbox 5": toolbox5,
-  "Toolbox 6": toolbox6,
-  "Toolbox 7": toolbox7,
-  "Toolbox 8": toolbox8,
+  "Toolbox 1": toolbox1, "Toolbox 2": toolbox2, "Toolbox 3": toolbox3, "Toolbox 4": toolbox4,
+  "Toolbox 5": toolbox5, "Toolbox 6": toolbox6, "Toolbox 7": toolbox7, "Toolbox 8": toolbox8,
 };
 
-// --- KOMPONEN KAMERA AI ---
+/* ==========================================
+   COMPONENT: CAMERA AI
+   ========================================== */
 const CameraAI = ({ onDetected, loading }) => {
   const webcamRef = useRef(null);
-
+  
   const handleCapture = () => {
     const imageSrc = webcamRef.current.getScreenshot();
     if (imageSrc) {
-      // Membersihkan string base64 agar hanya datanya saja yang dikirim (sesuai kebutuhan Laravel Http)
       const base64Data = imageSrc.replace(/^data:image\/\w+;base64,/, "");
       onDetected(base64Data);
     }
   };
 
   return (
-    <div className="mt-4 p-4 border-2 border-dashed border-blue-400 rounded-md flex flex-col items-center bg-blue-50">
-      <div className="w-full overflow-hidden rounded-md mb-2 bg-black border-2 border-gray-800">
-        <Webcam
-          audio={false}
-          ref={webcamRef}
-          screenshotFormat="image/jpeg"
-          className="w-full h-auto"
+    <div className="mt-4 p-4 border-2 border-dashed border-blue-400 rounded-xl flex flex-col items-center bg-blue-50">
+      <div className="w-full overflow-hidden rounded-lg mb-4 bg-black border-2 border-gray-800">
+        <Webcam 
+          audio={false} 
+          ref={webcamRef} 
+          screenshotFormat="image/jpeg" 
+          className="w-full h-auto" 
         />
       </div>
-      <p className="text-xs text-blue-700 mb-3 text-center font-medium">
-        📷 Pastikan alat terlihat jelas di kamera.
-      </p>
       <button
         type="button"
         onClick={handleCapture}
         disabled={loading}
-        className={`px-4 py-3 w-full text-white rounded-md font-bold transition ${
-          loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600 shadow-lg"
+        className={`px-4 py-4 w-full text-white rounded-lg font-bold text-lg transition shadow-lg ${
+          loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600 active:scale-95"
         }`}
       >
-        {loading ? "⌛ Menganalisis Objek..." : "🎯 Verifikasi AI & Ambil"}
+        {loading ? "⌛ Menganalisis Objek..." : "🎯 Verifikasi & Ambil Alat"}
       </button>
     </div>
   );
 };
 
+/* ==========================================
+   MAIN COMPONENT: CAPTAIN DASHBOARD
+   ========================================== */
 export default function CaptainDashboard() {
   const [tools] = useState([
-    { id: 1, nama: "Toolbox 1" },
-    { id: 2, nama: "Toolbox 2" },
-    { id: 3, nama: "Toolbox 3" },
-    { id: 4, nama: "Toolbox 4" },
-    { id: 5, nama: "Toolbox 5" },
-    { id: 6, nama: "Toolbox 6" },
-    { id: 7, nama: "Toolbox 7" },
-    { id: 8, nama: "Toolbox 8" },
+    { id: 1, nama: "Toolbox 1" }, { id: 2, nama: "Toolbox 2" },
+    { id: 3, nama: "Toolbox 3" }, { id: 4, nama: "Toolbox 4" },
+    { id: 5, nama: "Toolbox 5" }, { id: 6, nama: "Toolbox 6" },
+    { id: 7, nama: "Toolbox 7" }, { id: 8, nama: "Toolbox 8" },
   ]);
 
   const [selectedTool, setSelectedTool] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [namaKelas, setNamaKelas] = useState("");
+  const [captainData, setCaptainData] = useState(null);
   const [loadingAI, setLoadingAI] = useState(false);
 
-  const handleAmbilAlatClick = (e) => {
-    e.preventDefault();
-    if (!namaKelas) return alert("Silakan masukkan Nama Kelas peminjam!");
-    setShowCamera(true);
-  };
+  // Load data dari LocalStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("captain");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setCaptainData(parsed);
+    }
+  }, []);
 
+  /* PROSES KIRIM KE DATABASE (PERBAIKAN NAMA_KELAS) */
   const handleDetected = async (base64Data) => {
     setLoadingAI(true);
     try {
-      // Mengirim data ke route /api/detect-alat di Laravel
-      const response = await axios.post("/api/detect-alat", {
-        image: base64Data,
-        nama_alat: selectedTool.nama,
-        nama_kelas: namaKelas
-      });
+      /** * PERBAIKAN: Pastikan 'nama_kelas' dikirim dengan isi 'captainData.kelas' 
+       * agar tidak lagi masuk sebagai "Umum" di database.
+       */
+      const payload = {
+        image: base64Data, 
+        nama_alat: selectedTool.nama, 
+        nama_kelas: captainData?.kelas || "Umum", // Mengambil Pagi C / Pagi B dari session
+        semester: captainData?.semester || "-"
+      };
 
-      if (response.data.status === "success") {
-        alert(`✅ Berhasil! AI Mendeteksi: ${response.data.detected}. Data peminjaman telah disimpan.`);
-        setShowCamera(false);
+      const res = await axios.post("/api/detect-alat", payload);
+      
+      if (res.data.status === "success") {
+        alert(`✅ Sukses! Peminjaman Kelas ${captainData.kelas} tercatat.`);
         setSelectedTool(null);
-        setNamaKelas("");
+        setShowCamera(false);
       }
-    } catch (error) {
-      // Menangkap pesan error dari Controller (Misal: "AI tidak mendeteksi alat")
-      const msg = error.response?.data?.message || "Verifikasi AI gagal, coba lagi.";
-      alert(`❌ Error: ${msg}`);
-    } finally {
-      setLoadingAI(false);
-    }
+    } catch (err) { 
+      alert("❌ Gagal: " + (err.response?.data?.message || "Verifikasi AI Gagal")); 
+    } finally { setLoadingAI(false); }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 font-sans">
+    <div className="flex min-h-screen bg-gray-50 font-sans">
       <SidebarCaptain />
-
+      
       <div className="flex-1 flex flex-col">
         <HeaderCaptain />
-
+        
         <div className="p-8">
-          <header className="mb-8">
-            <h1 className="text-3xl font-extrabold text-gray-800">
-              Captain Dashboard <span className="text-blue-600">PILAH</span>
+          <header className="mb-10">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight italic">
+              Dashboard <span className="text-blue-600 text-3xl">PILAH</span>
             </h1>
-            <p className="text-gray-500">Pilih toolbox untuk memulai proses peminjaman dengan verifikasi AI.</p>
           </header>
 
-          {/* GRID LIST TOOLBOX */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-12">
-            {tools.map((tool) => (
-              <div
-                key={tool.id}
-                onClick={() => {
-                  setSelectedTool(tool);
-                  setShowCamera(false);
-                  setNamaKelas("");
-                }}
-                className={`flex flex-col items-center bg-white rounded-xl shadow-sm border-2 cursor-pointer transition-all duration-300 hover:scale-105 p-4 ${
-                  selectedTool?.id === tool.id ? "border-blue-500 bg-blue-50 shadow-md" : "border-transparent"
+          {/* GRID ALAT */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {tools.map((t) => (
+              <div 
+                key={t.id} 
+                onClick={() => { setSelectedTool(t); setShowCamera(false); }}
+                className={`group p-6 bg-white rounded-3xl border-2 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1 ${
+                  selectedTool?.id === t.id ? "border-blue-600 bg-blue-50/50" : "border-gray-100 hover:border-blue-300"
                 }`}
               >
-                <img
-                  src={toolboxImages[tool.nama]}
-                  alt={tool.nama}
-                  className="w-full h-40 object-contain mb-3"
-                />
-                <p className="text-lg font-semibold text-gray-700">{tool.nama}</p>
+                <div className="aspect-square flex items-center justify-center mb-4 overflow-hidden rounded-xl bg-gray-50">
+                  <img src={toolboxImages[t.nama]} className="w-4/5 h-4/5 object-contain" alt={t.nama} />
+                </div>
+                <p className="text-center font-black text-gray-800 text-lg uppercase">{t.nama}</p>
               </div>
             ))}
           </div>
 
-          {/* MODAL PROSES PEMINJAMAN */}
+          {/* MODAL PINJAM (KELAS & SEMESTER SAJA) */}
           {selectedTool && (
-            <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4 animate-fadeIn">
-              <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl relative">
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+              <div className="bg-white p-8 rounded-[2rem] w-full max-w-md relative shadow-2xl border-t-[10px] border-blue-600">
                 <button 
-                  onClick={() => setSelectedTool(null)}
-                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
-                >
-                  ✕
-                </button>
-
-                <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center border-b pb-4">
-                  Pinjam {selectedTool.nama}
-                </h2>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Alat</label>
-                    <input
-                      type="text"
-                      value={selectedTool.nama}
-                      className="w-full border bg-gray-100 rounded-lg p-3 outline-none font-bold text-gray-700"
-                      readOnly
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Kelas / Peminjam</label>
-                    <input
-                      type="text"
-                      placeholder="Masukkan nama kelas (contoh: XII RPL 1)"
-                      value={namaKelas}
-                      onChange={(e) => setNamaKelas(e.target.value)}
-                      disabled={showCamera}
-                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    />
+                  onClick={() => setSelectedTool(null)} 
+                  className="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors"
+                >✕</button>
+                
+                <h2 className="text-2xl font-black mb-6 text-center text-gray-900">Pinjam {selectedTool.nama}</h2>
+                
+                <div className="space-y-6">
+                  {/* Tampilan Kelas & Semester Sesuai Database */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Informasi Sesi Login</label>
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="flex flex-col">
+                            <span className="text-xs text-slate-500 font-bold">KELAS</span>
+                            <span className="text-xl font-black text-blue-700">{captainData?.kelas || "---"}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-xs text-slate-500 font-bold">SEMESTER</span>
+                            <span className="text-xl font-black text-slate-900">{captainData?.semester || "-"}</span>
+                        </div>
+                    </div>
                   </div>
 
                   {!showCamera ? (
-                    <button
-                      onClick={handleAmbilAlatClick}
-                      className="w-full mt-4 px-4 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-bold shadow-lg transition-all"
+                    <button 
+                      onClick={() => setShowCamera(true)} 
+                      disabled={!captainData}
+                      className={`w-full py-5 rounded-2xl font-black text-lg shadow-xl transition-all duration-300 ${
+                        captainData 
+                        ? "bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-blue-200" 
+                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      }`}
                     >
-                      Buka Kamera Verifikasi
+                      Buka Kamera Verifikasi AI
                     </button>
                   ) : (
                     <CameraAI onDetected={handleDetected} loading={loadingAI} />
-                  )}
-                  
-                  {showCamera && (
-                    <button 
-                      onClick={() => setShowCamera(false)}
-                      disabled={loadingAI}
-                      className="mt-2 w-full text-sm text-gray-400 hover:text-red-500 transition"
-                    >
-                      Batal & Tutup Kamera
-                    </button>
                   )}
                 </div>
               </div>

@@ -7,7 +7,33 @@ export default function CaptainHeader() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // State untuk menyimpan data dinamis
+  const [userProfile, setUserProfile] = useState({
+    nama: "",
+    kelas: "",
+    semester: "",
+    nim: ""
+  });
+
   const dropdownRef = useRef(null);
+
+  // Ambil data dari localStorage saat komponen dimuat
+  useEffect(() => {
+    const data = localStorage.getItem("captain"); // Sesuaikan key dengan LandingPage
+    if (data) {
+      try {
+        const parsed = JSON.parse(data);
+        setUserProfile({
+          nama: parsed.nama || "User",
+          kelas: parsed.kelas || parsed.nama_kelas || "Pagi A",
+          semester: parsed.semester || "3",
+          nim: parsed.nim || "-"
+        });
+      } catch (e) {
+        console.error("Gagal ambil data profil", e);
+      }
+    }
+  }, []);
 
   // Tutup dropdown saat klik luar
   useEffect(() => {
@@ -27,7 +53,7 @@ export default function CaptainHeader() {
   };
 
   const confirmLogout = () => {
-    // Pastikan route web.php ada: Route::get('/', ... Inertia::render('LandingPage'));
+    localStorage.removeItem("captain"); // Bersihkan session
     router.visit("/"); 
   };
 
@@ -89,8 +115,8 @@ export default function CaptainHeader() {
             </h2>
 
             <div className="flex flex-col gap-2 text-gray-700">
-              <p><strong>Nama Kelas:</strong> Pagi A</p>
-              <p><strong>Semester:</strong> 3</p>
+              <p><strong>Nama Kelas:</strong> {userProfile.kelas}</p>
+              <p><strong>Semester:</strong> {userProfile.semester}</p>
             </div>
 
             <div className="mt-5">
