@@ -100,71 +100,112 @@
             <div className="min-h-screen bg-cover bg-center bg-no-repeat">
                 <Navbar />
 
-                {/* SECTION 1: HERO & RFID ACCESS */}
-                <div
-                    className="w-full h-[1000px] bg-cover bg-center bg-no-repeat flex flex-col pt-20"
-                    style={{ backgroundImage: `url(${Hanggar})` }}
-                >
-                    <main className="px-6 py-10 grid lg:grid-cols-2 gap-12 items-start">
+{/* ================= SECTION 1 ================= */}
+<section className="relative w-full min-h-[120vh] pt-[96px] bg-white overflow-hidden">
 
-                        {/* LEFT SIDE: TEXT INFO */}
-                        <div className="flex flex-col justify-center p-16 rounded-xl backdrop-blur-md bg-black/10">
-                            <h2 className="text-6xl font-bold leading-tight text-white">
-                                Aplikasi Peminjaman Alat
-                                Hanggar Perawatan<br />
-                                Pesawat
-                            </h2>
+  {/* BACKGROUND HANGGAR – SETENGAH LINGKARAN */}
+  <div
+    className="absolute top-0 right-0 h-full w-[60%] overflow-hidden
+               rounded-l-[50%]"
+  >
+    <div
+      className="absolute inset-0 bg-cover bg-left"
+      style={{ backgroundImage: `url(${Hanggar})` }}
+    >
 
-                            <p className="text-white mt-6 font-medium text-lg">
-                                Sistem manajemen peminjaman alat berbasis
-                                <b className="text-blue-300"> “Artificial Intelligence” </b> dengan teknologi
-                                <b className="text-blue-300"> “RFID” </b> untuk efisiensi dan keamanan maksimal.
-                            </p>
-                        </div>
+    </div>
+  </div>
 
-                        {/* RIGHT SIDE: RFID SCANNER UI */}
-                        <div className="bg-blue-900/80 backdrop-blur-lg p-10 rounded-3xl shadow-2xl 
-                                        h-[600px] flex flex-col justify-between border border-blue-400/30">
+  <main
+    className="relative z-10 h-full px-16
+               grid lg:grid-cols-[35%_50%]
+               gap-10 items-center w-full"
+  >
 
-                            <div className="text-center">
-                                <div className="bg-blue-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto border border-blue-400">
-                                    <Radio className="w-10 h-10 text-white animate-pulse" />
-                                </div>
-                                <h3 className="text-3xl font-bold mt-6 text-white tracking-wide">
-                                    RFID Access Point
-                                </h3>
-                                <p className="text-blue-200 mt-2">
-                                    Tempelkan kartu RFID Anda pada reader untuk masuk
-                                </p>
-                            </div>
+    {/* LEFT FRAME */}
+    <div className="flex flex-col gap-6">
 
-                            {/* RFID BUTTON VISUAL */}
-                            <div
-                                className={`w-full transition-all duration-500 p-10 py-16 rounded-2xl flex flex-col items-center justify-center gap-4 ${
-                                    isScanning ? "bg-blue-600 shadow-[0_0_40px_rgba(37,99,235,0.4)]" : "bg-blue-500/40 border-2 border-dashed border-blue-400"
-                                }`}
-                            >
-                                {isScanning ? (
-                                    <Loader2 className="w-20 h-20 text-white animate-spin" />
-                                ) : (
-                                    <Radio className="w-20 h-20 text-white opacity-80" />
-                                )}
-                                <p className="font-black text-white text-2xl uppercase tracking-[0.2em]">
-                                    {isScanning ? "Scanning Card..." : "Ready to Scan"}
-                                </p>
-                            </div>
+      <div>
+        <h2 className="text-4xl font-black text-slate-900 leading-tight">
+          Aplikasi Peminjaman Alat<br />
+          Hangar Perawatan<br />
+          Pesawat
+        </h2>
 
-                            <div className="flex items-center justify-center gap-2 text-blue-300 font-semibold tracking-wider">
-                                <ShieldCheck className="w-5 h-5" />
-                                SECURED BY PILAH SYSTEM
-                            </div>
-                        </div>
+        <p className="text-slate-600 mt-3 text-sm font-medium">
+          Sistem manajemen peminjaman alat berbasis
+          <span className="text-blue-600 font-semibold"> Artificial Intelligence </span>
+          dengan teknologi
+          <span className="text-blue-600 font-semibold"> RFID </span>
+          untuk efisiensi dan keamanan maksimal.
+        </p>
+      </div>
 
-                    </main>
-                </div>
+      {/* RFID CARD */}
+      <div
+        className="bg-blue-900/90 backdrop-blur-lg p-14 rounded-3xl
+                   h-[600px] flex flex-col justify-between
+                   border border-blue-400/30"
+      >
+        <div className="text-center">
+          <div
+            className="bg-blue-500/20 w-16 h-16 rounded-full
+                       flex items-center justify-center mx-auto
+                       border border-blue-400"
+          >
+            <Radio className="w-8 h-8 text-white animate-pulse" />
+          </div>
+
+          <h3 className="text-3xl font-bold mt-3 text-white tracking-wide">
+            RFID Access Point
+          </h3>
+
+          <p className="text-blue-200 mt-2">
+            Tempelkan kartu RFID Anda pada reader untuk masuk
+          </p>
+        </div>
+
+        <div
+          className={`w-full transition-all duration-500 py-6 rounded-2xl
+          flex flex-col items-center justify-center gap-2 ${
+            isScanning
+              ? "bg-blue-600 shadow-[0_0_40px_rgba(37,99,235,0.4)]"
+              : "bg-blue-500/40 border-2 border-dashed border-blue-400"
+          }`}
+        >
+          {isScanning ? (
+            <Loader2 className="w-16 h-16 text-white animate-spin" />
+          ) : (
+            <Radio className="w-16 h-16 text-white opacity-80" />
+          )}
+
+          <p className="font-black text-white text-2xl uppercase tracking-[0.2em]">
+            {isScanning ? "Scanning Card..." : "Ready to Scan"}
+          </p>
+        </div>
+
+        <div
+          className="flex items-center justify-center gap-2
+                     text-blue-300 font-semibold tracking-wider"
+        >
+          <ShieldCheck className="w-5 h-5" />
+          SECURED BY PILAH SYSTEM
+        </div>
+      </div>
+    </div>
+
+    {/* RIGHT COLUMN KOSONG (DIISI BACKGROUND) */}
+    <div />
+  </main>
+</section>
+
+
+
+
 
                 {/* SECTION 2: FEATURES */}
-                <div className="py-24 px-6 max-w-7xl mx-auto bg-white shadow-2xl -mt-20 rounded-[3rem] relative z-10 border border-gray-100">
+<section className="relative w-full min-h-[120vh] pt-[96px] flex items-center justify-center -mt-32 -mb-20">
+                <div className="py-24 px-6 max-w-7xl mx-auto bg-white shadow-2xl rounded-[3rem] relative z-10 border border-gray-100">
                     <h2 className="text-4xl font-black text-slate-900 text-center uppercase tracking-widest">Fitur Unggulan</h2>
                     <div className="w-24 h-2 bg-blue-600 mx-auto mt-4 rounded-full"></div>
 
@@ -175,9 +216,10 @@
                         <FeatureCard icon={<Users size={40} />} title="Tracking" desc="Riwayat peminjaman per kelas & semester tercatat." />
                     </div>
                 </div>
-
+                </section>
                 <Footer />
             </div>
+            
         );
     }
 
@@ -196,16 +238,16 @@
 
         return (
             <nav className={`fixed top-0 left-0 w-full z-50 px-6 transition-all duration-300 ${solid ? "bg-white/90 shadow-lg backdrop-blur-md py-2" : "bg-transparent py-4"}`}>
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                <div className="w-full flex justify-between items-center px-8">
                     <div className="flex items-center gap-4">
                         <img src={Kucing} className="h-14 w-14 rounded-2xl shadow-lg border-2 border-white" />
                         <div>
-                            <h1 className={`font-black text-2xl tracking-tighter ${solid ? "text-blue-900" : "text-white"}`}>PILAH</h1>
-                            <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${solid ? "text-blue-600" : "text-blue-200"}`}>Hanggar Maintenance</p>
+                            <h1 className={`font-black text-3xl tracking-tighter ${solid ? "text-blue-900" : "text-blue-600"}`}>PILAH</h1>
+                            <p className={`text-[12px] font-bold uppercase tracking-[0.2em] ${solid ? "text-blue-600" : "text-blue-900/90"}`}>Hangar Maintenance</p>
                         </div>
                     </div>
 
-                    <div className={`hidden md:flex items-center space-x-8 font-black uppercase text-sm ${solid ? "text-slate-700" : "text-white"}`}>
+                    <div className={`hidden md:flex items-center space-x-8 font-black uppercase text-xl ${solid ? "text-slate-700" : "text-white"}`}>
                         <button className="hover:text-blue-500 transition">Home</button>
                         <button className="hover:text-blue-500 transition">About</button>
                         <button 
