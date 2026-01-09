@@ -16,9 +16,9 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 #define SOLENOID_KUNCI HIGH
 
 // ================== WIFI & MQTT =================
-const char* ssid = "Chill";
-const char* password = "zzzzzzz1";
-const char* mqttServer = "10.122.39.132";
+const char* ssid = "POCO F7";
+const char* password = "22211121";
+const char* mqttServer = "10.135.149.246";
 const int mqttPort = 1883;
 
 WiFiClient espClient;

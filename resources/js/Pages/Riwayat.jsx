@@ -2,8 +2,18 @@ import React, { useState, useEffect } from "react";
 import StoremanSidebar from "@/Components/StoremanSidebar";  
 import StoremanHeader from "@/Components/StoremanHeader";
 import axios from "axios";
+import { router } from "@inertiajs/react"; // <-- import router untuk redirect
 
 export default function Riwayat() {
+    /* =====================
+       AUTH GUARD
+    ====================== */
+    useEffect(() => {
+        if (!localStorage.getItem("storeman_login")) {
+            router.visit("/"); // redirect ke login
+        }
+    }, []);
+
     const [riwayat, setRiwayat] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
